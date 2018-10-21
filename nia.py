@@ -33,13 +33,17 @@ def portion_size(sex, food, obj_area, hand_area):
 	portion = sex*food * hand_area
 	print("Food amount: ",obj_area )
 	print("Correct amount: ", portion)
+	error = portion - obj_area
+	print(error)
 
-	if portion <= obj_area-0.5 or portion >= obj_area+0.5:
+	# if the error is within half .5 it is ok
+	if error <= 0.5 and error >= -0.5:
 		print("Correct Portion Size")
-		return True
-	else:
-		print("Incorrect Portion Size")
-		return False
+	elif error > 0:
+		print("Portion size could be bigger")
+	elif error < 0:
+		print("Portion size is too big")
+	
 
 # load the image, convert it to grayscale, and blur it slightly
 image = cv2.imread(path)
@@ -163,7 +167,7 @@ for c in cnts:
 obj_area = object[0]*object[1]
 hand_area = hand[0]*hand[1]
 
-sex = SEX["M"]
+sex = SEX["F"]
 food = FOOD_GROUPS["FAT"]
 
 portion_size(sex, food, obj_area, hand_area)
