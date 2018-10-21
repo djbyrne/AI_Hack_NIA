@@ -23,7 +23,7 @@ def midpoint(ptA, ptB):
 #	help="width of the left-most object in the image (in inches)")
 #args = vars(ap.parse_args())
     
-path = "/Users/donalbyrne/Workspace/AI_Hack/data/t5.JPG"
+path = "/Users/donalbyrne/Workspace/AI_Hack/data/000012.JPG"
 width = 3
 
 SEX = {"M":2, "F":1}
@@ -33,24 +33,28 @@ def portion_size(sex, food, obj_area, hand_area):
 	portion = sex*food * hand_area
 	print("Food amount: ",obj_area )
 	print("Correct amount: ", portion)
+	error = portion - obj_area
+	print(error)
 
-	if portion <= obj_area-0.5 or portion >= obj_area+0.5:
+	# if the error is within half .5 it is ok
+	if error <= 0.5 and error >= -0.5:
 		print("Correct Portion Size")
-		return True
-	else:
-		print("Incorrect Portion Size")
-		return False
+	elif error > 0:
+		print("Portion size could be bigger")
+	elif error < 0:
+		print("Portion size is too big")
+	
 
 # load the image, convert it to grayscale, and blur it slightly
 image = cv2.imread(path)
 #gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-gray = cv2.GaussianBlur(image, (9, 9), 0)
+# gray = cv2.GaussianBlur(image, (9, 9), 0)
 
 # perform edge detection, then perform a dilation + erosion to
 # close gaps in between object edges
-edged = cv2.Canny(gray, 50, 100)
-edged = cv2.dilate(edged, None, iterations=1)
-edged = cv2.erode(edged, None, iterations=1)
+edged = cv2.Canny(image, 50, 100)
+# edged = cv2.dilate(edged, None, iterations=1)
+# edged = cv2.erode(edged, None, iterations=1)
 
 # find contours in the edge map
 cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL,
@@ -163,7 +167,7 @@ for c in cnts:
 obj_area = object[0]*object[1]
 hand_area = hand[0]*hand[1]
 
-sex = SEX["M"]
+sex = SEX["F"]
 food = FOOD_GROUPS["FAT"]
 
 portion_size(sex, food, obj_area, hand_area)
